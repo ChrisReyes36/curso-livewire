@@ -4,9 +4,12 @@ namespace App\Http\Livewire;
 
 use App\Models\Post;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class CreatePost extends Component
 {
+  use WithFileUploads;
+
   public $open = false;
   public $title, $content, $image, $identificador;
 
@@ -16,6 +19,11 @@ class CreatePost extends Component
     'image' => 'required|image|max:2048'
   ];
 
+  // public function updated($propertyName)
+  // {
+  //   $this->validateOnly($propertyName);
+  // }
+
   public function mount()
   {
     $this->identificador = rand();
@@ -23,9 +31,14 @@ class CreatePost extends Component
 
   public function save()
   {
+    $this->validate();
+
+    $image = $this->image->store('public/posts');
+
     Post::create([
       'title' => $this->title,
-      'content' => $this->content
+      'content' => $this->content,
+      'image' => $image
     ]);
 
     $this->reset(['open', 'title', 'content', 'image']);

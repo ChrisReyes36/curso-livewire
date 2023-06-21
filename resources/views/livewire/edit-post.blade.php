@@ -1,17 +1,18 @@
 <div>
-    <x-danger-button wire:click="$set('open', true)">
-        Crear nuevo post&numsp;<i class="fas fa-plus"></i>
-    </x-danger-button>
+    <a class="cursor-pointer bg-green-700 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+        wire:click="$set('open', true)">
+        <i class="fas fa-edit"></i>
+    </a>
 
     <x-dialog-modal wire:model="open">
         <x-slot name="title">
-            Crear nuevo post
+            Edit Post
         </x-slot>
 
         <x-slot name="content">
             <div class="mb-4">
                 <x-label for="title" value="Título" />
-                <x-input wire:model.defer="title" id="title" class="block mt-1 w-full" type="text" />
+                <x-input wire:model.defer="post.title" id="title" class="block mt-1 w-full" type="text" />
                 @error('title')
                     <span class="text-red-500 text-xs">{{ $message }}</span>
                 @enderror
@@ -19,7 +20,7 @@
 
             <div class="mb-4">
                 <x-label for="content" value="Contenido" />
-                <textarea wire:model.defer="content" id="content" rows="6"
+                <textarea wire:model.defer="post.content" id="content" rows="6"
                     class="form-control block mt-1 w-full border-gray-300 focus:ring-indigo-500 rounded-md shadow-sm"></textarea>
                 @error('content')
                     <span class="text-red-500 text-xs">{{ $message }}</span>
@@ -36,7 +37,9 @@
                     </div>
                 </div>
                 @if ($image)
-                    <img src="{{ $image->temporaryUrl() }}" class="object-cover h-64 w-full">
+                    <img src="{{ $image->temporaryUrl() }}" class="object-cover h-64 w-full mt-4">
+                @else
+                    <img src="{{ Storage::url($post->image) }}" class="object-cover h-64 w-full mt-4">
                 @endif
                 @error('image')
                     <span class="text-red-500 text-xs">{{ $message }}</span>
@@ -49,9 +52,9 @@
                 Cancelar
             </x-secondary-button>
             &numsp;
-            <x-danger-button wire:click="save" wire:loading.attr="disabled" wire:target="save, image"
+            <x-danger-button wire:click="save" wire:loading.attr="disabled" wire:target="save"
                 class="disabled:opacity-25">
-                Crear post
+                Actualizar post
             </x-danger-button>
         </x-slot>
     </x-dialog-modal>

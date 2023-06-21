@@ -20,7 +20,7 @@
             <div class="mb-4">
                 <x-label for="content" value="Contenido" />
                 <textarea wire:model.defer="content" id="content" rows="6"
-                    class="form-control block mt-1 w-full border-gray-300 focus:ring-indigo-500 rounded-md shadow-sm"></textarea>
+                    class="block mt-1 w-full border-gray-300 focus:ring-indigo-500 rounded-md shadow-sm"></textarea>
                 @error('content')
                     <span class="text-red-500 text-xs">{{ $message }}</span>
                 @enderror

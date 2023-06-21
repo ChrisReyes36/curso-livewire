@@ -1,4 +1,4 @@
-<div>
+<div wire:init="loadPosts">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Dashboard') }}
@@ -8,7 +8,22 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <x-table>
             <div class="px-6 py-4 flex items-center">
-                <x-input class="flex-1 mx-4" placeholder="Escriba que quiere buscar" type="text" wire:model="search" />
+                <div class="flex items-center">
+                    <span>Mostrar</span>
+
+                    <select wire:model="cant"
+                        class="mx-2 block w-full border-gray-300 focus:ring-indigo-500 rounded-md shadow-sm">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+
+                    <span>entradas</span>
+                </div>
+
+                <x-input class="flex-1 mx-4" placeholder="Escriba que quiere buscar" type="text"
+                    wire:model="search" />
 
                 @livewire('create-post')
             </div>
@@ -100,14 +115,30 @@
                             </td>
                         </tr>
                     @empty
-                        <tr>
-                            <td colspan="4" class="px-6 py-4 text-sm text-gray-500">
-                                No posts found!
-                            </td>
-                        </tr>
+                        @if (!$readyToLoad)
+                            <tr>
+                                <td colspan="4" class="px-6 py-4 text-center text-gray-500 text-2xl">
+                                    <i class="fa fa-spinner fa-spin"></i>
+                                </td>
+                            </tr>
+                        @else
+                            <tr>
+                                <td colspan="4" class="px-6 py-4 text-sm text-gray-500">
+                                    No posts found!
+                                </td>
+                            </tr>
+                        @endif
                     @endforelse
                 </tbody>
             </table>
+
+            @if (count($posts))
+                @if ($posts->hasPages())
+                    <div class="px-6 py-3">
+                        {{ $posts->links() }}
+                    </div>
+                @endif
+            @endif
         </x-table>
     </div>
 

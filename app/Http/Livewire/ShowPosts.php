@@ -3,19 +3,30 @@
 namespace App\Http\Livewire;
 
 use App\Models\Post;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\Storage;
+use Livewire\WithPagination;
 
 class ShowPosts extends Component
 {
   use WithFileUploads;
+  use WithPagination;
 
   public $search = '', $post, $image, $identificador;
   public $sort = 'id';
   public $direction = 'desc';
+  public $cant = '10';
+  public $readyToLoad = false;
 
   public $open_edit = false;
+
+  protected $queryString = [
+    'cant' => ['except' => '10'],
+    'sort' => ['except' => 'id'],
+    'direction' => ['except' => 'desc'],
+    'search' => ['except' => '']
+  ];
 
   protected $rules = [
     'post.title' => 'required|max:10',
@@ -31,13 +42,27 @@ class ShowPosts extends Component
     $this->post = new Post();
   }
 
+  public function updatingSearch()
+  {
+    $this->resetPage();
+  }
+
   public function render()
   {
-    $posts = Post::where('title', 'LIKE', '%' . $this->search . '%')
-      ->orWhere('content', 'LIKE', '%' . $this->search . '%')
-      ->orderBy($this->sort, $this->direction)
-      ->get();
+    if ($this->readyToLoad) {
+      $posts = Post::where('title', 'LIKE', '%' . $this->search . '%')
+        ->orWhere('content', 'LIKE', '%' . $this->search . '%')
+        ->orderBy($this->sort, $this->direction)
+        ->paginate($this->cant);
+    } else {
+      $posts = [];
+    }
     return view('livewire.show-posts', compact('posts'));
+  }
+
+  function loadPosts(): void
+  {
+    $this->readyToLoad = true;
   }
 
   public function order($sort)

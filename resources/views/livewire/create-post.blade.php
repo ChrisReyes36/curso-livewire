@@ -17,10 +17,12 @@
                 @enderror
             </div>
 
-            <div class="mb-4" wire:ignore>
-                <x-label for="content" value="Contenido" />
-                <textarea id="editor" wire:model.defer="content" rows="6"
-                    class="block mt-1 w-full border-gray-300 focus:ring-indigo-500 rounded-md shadow-sm"></textarea>
+            <div class="mb-4">
+                <div wire:ignore>
+                    <x-label for="content" value="Contenido" />
+                    <textarea id="editor" wire:model.defer="content" rows="6"
+                        class="block mt-1 w-full border-gray-300 focus:ring-indigo-500 rounded-md shadow-sm"></textarea>
+                </div>
                 @error('content')
                     <span class="text-red-500 text-xs">{{ $message }}</span>
                 @enderror
@@ -36,7 +38,7 @@
                     </div>
                 </div>
                 @if ($image)
-                    <img src="{{ $image ? $image->temporaryUrl() : '' }}" class="object-cover h-64 w-full">
+                    <img src="{{ $image ? $image->temporaryUrl() : '' }}" class="object-cover h-64 w-full mt-4">
                 @endif
                 @error('image')
                     <span class="text-red-500 text-xs">{{ $message }}</span>
@@ -65,7 +67,11 @@
                 .then(function(editor) {
                     editor.model.document.on('change:data', () => {
                         @this.set('content', editor.getData());
-                    })
+                    });
+
+                    Livewire.on('resetCKEditor', () => {
+                        editor.setData('');
+                    });
                 })
                 .catch(error => {
                     console.error(error);

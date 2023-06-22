@@ -18,6 +18,8 @@
     {{-- Fontawesome --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
+    @stack('css')
+
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -51,6 +53,8 @@
 
     @livewireScripts
 
+    @stack('js')
+
     <script>
         Livewire.on('alert', ({
             title,
@@ -63,7 +67,8 @@
                 icon,
                 showConfirmButton: false,
                 timer: 2500,
-                allowOutsideClick: false
+                allowOutsideClick: false,
+                timerProgressBar: true,
             })
         })
     </script>

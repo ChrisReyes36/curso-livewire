@@ -98,7 +98,7 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="text-sm text-gray-900">
-                                    {{ $item->content }}
+                                    {!! $item->content !!}
                                 </div>
                             </td>
                             <td class="px-6 py-4 ext-sm font-medium flex">
@@ -109,9 +109,10 @@
                                     <i class="fas fa-edit"></i>
                                 </a>
 
-                                {{-- <a class="bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ml-2">
+                                <a class="cursor-pointer bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ml-2"
+                                    wire:click="$emit('deletePost', {{ $item->id }})">
                                     <i class="fas fa-trash"></i>
-                                </a> --}}
+                                </a>
                             </td>
                         </tr>
                     @empty
@@ -175,9 +176,10 @@
                     </div>
                 </div>
                 @if ($image)
-                    <img src="{{ $image->temporaryUrl() }}" class="object-cover h-64 w-full mt-4">
+                    <img src="{{ $image ? $image->temporaryUrl() : '' }}" class="object-cover h-64 w-full mt-4">
                 @else
-                    <img src="{{ Storage::url($post->image) }}" class="object-cover h-64 w-full mt-4">
+                    <img src="{{ $post->image ? Storage::url($post->image) : '' }}"
+                        class="object-cover h-64 w-full mt-4">
                 @endif
                 @error('image')
                     <span class="text-red-500 text-xs">{{ $message }}</span>
@@ -196,4 +198,25 @@
             </x-danger-button>
         </x-slot>
     </x-dialog-modal>
+
+    @push('js')
+        <script>
+            Livewire.on('deletePost', postId => {
+                Swal.fire({
+                    title: '¿Está seguro/a?',
+                    text: "¡No podrá revertir esto!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: '¡Sí, bórralo!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Livewire.emitTo('show-posts', 'delete', postId);
+                    }
+                })
+            });
+        </script>
+    @endpush
 </div>

@@ -21,6 +21,8 @@ class ShowPosts extends Component
 
   public $open_edit = false;
 
+  protected $listeners = ['render', 'delete'];
+
   protected $queryString = [
     'cant' => ['except' => '10'],
     'sort' => ['except' => 'id'],
@@ -33,8 +35,6 @@ class ShowPosts extends Component
     'post.content' => 'required|max:100',
     'image' => 'max:2048'
   ];
-
-  protected $listeners = ['render'];
 
   public function mount()
   {
@@ -103,5 +103,11 @@ class ShowPosts extends Component
 
     $this->emitTo('show-posts', 'render');
     $this->emit('alert', ['icon' => 'success', 'text' => 'El post se actualizó satisfactoriamente', 'title' => 'Post actualizado']);
+  }
+
+  function delete(Post $post): void
+  {
+    $post->delete();
+    $this->emit('alert', ['icon' => 'success', 'text' => 'El post se eliminó satisfactoriamente', 'title' => 'Post eliminado']);
   }
 }

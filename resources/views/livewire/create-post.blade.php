@@ -17,9 +17,9 @@
                 @enderror
             </div>
 
-            <div class="mb-4">
+            <div class="mb-4" wire:ignore>
                 <x-label for="content" value="Contenido" />
-                <textarea wire:model.defer="content" id="content" rows="6"
+                <textarea id="editor" wire:model.defer="content" rows="6"
                     class="block mt-1 w-full border-gray-300 focus:ring-indigo-500 rounded-md shadow-sm"></textarea>
                 @error('content')
                     <span class="text-red-500 text-xs">{{ $message }}</span>
@@ -36,7 +36,7 @@
                     </div>
                 </div>
                 @if ($image)
-                    <img src="{{ $image->temporaryUrl() }}" class="object-cover h-64 w-full">
+                    <img src="{{ $image ? $image->temporaryUrl() : '' }}" class="object-cover h-64 w-full">
                 @endif
                 @error('image')
                     <span class="text-red-500 text-xs">{{ $message }}</span>
@@ -55,4 +55,21 @@
             </x-danger-button>
         </x-slot>
     </x-dialog-modal>
+
+    @push('js')
+        <script src="https://cdn.ckeditor.com/ckeditor5/38.0.1/classic/ckeditor.js"></script>
+
+        <script>
+            ClassicEditor
+                .create(document.querySelector('#editor'))
+                .then(function(editor) {
+                    editor.model.document.on('change:data', () => {
+                        @this.set('content', editor.getData());
+                    })
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        </script>
+    @endpush
 </div>
